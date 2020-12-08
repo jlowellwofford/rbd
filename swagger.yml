@@ -88,6 +88,10 @@ definitions:
         type: integer
         format: int64
         readOnly: true
+      refs:
+        type: integer
+        format: int64
+        readOnly: true
       #external 
       monitors:
         type: array

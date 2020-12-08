@@ -99,6 +99,11 @@ func (r *RbdsType) Unmap(id int64) (err error) {
 		return fmt.Errorf("no such device id: %d", id)
 	}
 
+	// should we be able to force this?
+	if rbd.Refs > 0 {
+		return fmt.Errorf("device %d is in use, cannot unmap", id)
+	}
+
 	wc, err := krbd.RBDBusRemoveWriter()
 	defer wc.Close()
 
@@ -116,4 +121,19 @@ func (r *RbdsType) Unmap(id int64) (err error) {
 	delete(r.rbds, id)
 
 	return
+}
+
+// add/subtract from ref counter
+// silently fails if id doesn't exist
+func (r *RbdsType) RefAdd(id, n int64) {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
+
+	var rbd *models.Rbd
+	var ok bool
+
+	if rbd, ok = r.rbds[id]; !ok {
+		return
+	}
+	rbd.Refs += n
 }

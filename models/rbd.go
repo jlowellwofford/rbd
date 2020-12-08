@@ -41,6 +41,10 @@ type Rbd struct {
 	// Min Length: 1
 	Pool *string `json:"pool"`
 
+	// refs
+	// Read Only: true
+	Refs int64 `json:"refs,omitempty"`
+
 	// snapshot
 	Snapshot string `json:"snapshot,omitempty"`
 }
@@ -147,6 +151,10 @@ func (m *Rbd) ContextValidate(ctx context.Context, formats strfmt.Registry) erro
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateRefs(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -171,6 +179,15 @@ func (m *Rbd) contextValidateOptions(ctx context.Context, formats strfmt.Registr
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *Rbd) contextValidateRefs(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "refs", "body", int64(m.Refs)); err != nil {
+		return err
 	}
 
 	return nil

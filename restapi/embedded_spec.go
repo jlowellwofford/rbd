@@ -187,6 +187,11 @@ func init() {
           "type": "string",
           "minLength": 1
         },
+        "refs": {
+          "type": "integer",
+          "format": "int64",
+          "readOnly": true
+        },
         "snapshot": {
           "type": "string"
         }
@@ -455,6 +460,11 @@ func init() {
         "pool": {
           "type": "string",
           "minLength": 1
+        },
+        "refs": {
+          "type": "integer",
+          "format": "int64",
+          "readOnly": true
         },
         "snapshot": {
           "type": "string"
