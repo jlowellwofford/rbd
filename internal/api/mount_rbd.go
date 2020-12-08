@@ -87,6 +87,9 @@ func (m *MountsRBDType) Get(id int64) (mnt *models.MountRbd, err error) {
 }
 
 func (m *MountsRBDType) List() (mnts []*models.MountRbd) {
+	for _, i := range m.mnts {
+		mnts = append(mnts, i)
+	}
 	return
 }
 
