@@ -27,8 +27,8 @@ func (m *MountsRBDType) Mount(mnt *models.MountRbd) (ret *models.MountRbd, err e
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 	// does the mount already exist?
-	if _, err = m.Get(*mnt.ID); err == nil {
-		return nil, fmt.Errorf("mount failure: device %d is already mounted", mnt.ID)
+	if _, ok := m.mnts[*mnt.ID]; ok {
+		return nil, fmt.Errorf("mount failure: moint already exists for device %d", *mnt.ID)
 	}
 	// make sure the dev exists/is ours
 	if _, err = Rbds.Get(*mnt.ID); err != nil {
@@ -54,10 +54,12 @@ func (m *MountsRBDType) Mount(mnt *models.MountRbd) (ret *models.MountRbd, err e
 func (m *MountsRBDType) Unmount(id int64) (err error) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
-	var mnt *models.MountRbd
 
-	if mnt, err = m.Get(id); err != nil {
-		return fmt.Errorf("unmount failure: %v", err)
+	var mnt *models.MountRbd
+	var ok bool
+
+	if mnt, ok = m.mnts[id]; !ok {
+		return fmt.Errorf("unmount failure: no such device %d", id)
 	}
 
 	if mnt.Ref > 0 {
@@ -68,6 +70,7 @@ func (m *MountsRBDType) Unmount(id int64) (err error) {
 	if err = mount.Unmount(mnt.Mountpoint, false, true); err != nil {
 		return fmt.Errorf("unmount failure: %v", err)
 	}
+	os.Remove(mnt.Mountpoint) // we shouldn't fail on this. Should we report it anyway?
 	delete(m.mnts, id)
 	Rbds.RefAdd(id, -1)
 	return

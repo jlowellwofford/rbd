@@ -1,0 +1,7 @@
+{
+    "id": 0,
+    "fs_type": "ext2",
+    "mount_options": [
+        "rw"
+    ]
+}
