@@ -1,0 +1,13 @@
+{
+	"monitors": [
+		"1.2.3.4",
+		"10.11.12.13"
+	],
+	"pool": "rbd",
+	"image": "fancy-image",
+	"options": {
+		"ro": true,
+		"name": "admin",
+		"secret": "supersecret"
+	}
+}

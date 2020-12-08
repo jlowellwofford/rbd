@@ -1,0 +1,191 @@
+---
+consumes:
+- application/github.com.bensallen.rbd.v1+json
+info:
+  description: Manage RBD devices, mounts, and containers
+  title: Rados Block Device Boot
+  version: 1.0.0
+produces:
+- application/github.com.bensallen.rbd.v1+json
+schemes:
+- http
+- https
+swagger: "2.0"
+
+definitions:
+
+  rbd_options:
+    type: object
+    properties:
+      fsid:
+        type: string
+      ip:
+        type: string
+        format: ipv4
+        pattern: '^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$'
+      share:
+        type: boolean
+      noshare:
+        type: boolean
+      crc:
+        type: boolean
+      nocrc:
+        type: boolean
+      ceph_requires_signatures:
+        type: boolean
+      noceph_requires_signatures:
+        type: boolean
+      tcp_nodelay:
+        type: boolean
+      notcp_nodelay:
+        type: boolean
+      cephx_sign_messages:
+        type: boolean
+      nocephx_sign_messages:
+        type: boolean
+      mount_timeout:
+        type: integer
+      osdkeepalive:
+        type: integer
+      osd_idle_ttl:
+        type: integer
+      force:
+        type: boolean
+      rw:
+        type: boolean
+      ro:
+        type: boolean
+      queue_depth:
+        type: integer
+      lock_on_read:
+        type: boolean
+      exclusive:
+        type: boolean
+      lock_timeout:
+        type: integer
+        format: int64
+      notrim:
+        type: boolean
+      abort_on_full:
+        type: boolean
+      alloc_size:
+        type: integer
+      name:
+        type: string
+      secret:
+        type: string
+      namespace:
+        type: string
+
+  rbd:
+    type: object
+    required:
+      - monitors
+      - pool
+      - image
+      - id
+    properties:
+      id:
+        type: integer
+        format: int64
+        readOnly: true
+      #external 
+      monitors:
+        type: array
+        items:
+          type: string
+          format: ipv4
+          pattern: '^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$'
+      pool:
+        type: string
+        minLength: 1
+      image:
+        type: string
+        minLength: 1
+      snapshot:
+        type: string
+      options:
+        $ref: "#/definitions/rbd_options"
+    
+  error:
+    type: object
+    required:
+      - message
+    properties:
+      code:
+        type: integer
+        format: int64
+      message:
+        type: string
+
+  
+paths:
+
+  /rbd:
+    # get a list of rbds
+    get:
+      tags:
+        - rbds
+      operationId: list_rbds
+      responses:
+        200:
+          description: list of rbd maps
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/rbd"
+        default:
+          description: generic error response
+          schema:
+            $ref: "#/definitions/error"
+    post:
+      tags:
+        - rbds
+      operationId: map_rbd
+      parameters:
+        - name: rbd
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/rbd"
+      responses:
+        201:
+          description: RBD attach succeed
+          schema:
+            $ref: "#/definitions/rbd"
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"
+
+  /rbd/{id}:
+    parameters:
+      - type: integer
+        format: int64
+        name: id
+        in: path
+        required: true
+    get:
+      tags:
+        - rbds
+      operationId: get_rbd
+      responses:
+        200:
+          description: RBD entry
+          schema:
+            $ref: "#/definitions/rbd"
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"
+    delete:
+      tags:
+        - rbds
+      operationId: unmap_rbd
+      responses:
+        204:
+          description: Unmapped
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"
