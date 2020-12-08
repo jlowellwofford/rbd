@@ -160,8 +160,7 @@ func init() {
       "required": [
         "monitors",
         "pool",
-        "image",
-        "id"
+        "image"
       ],
       "properties": {
         "id": {
@@ -430,8 +429,7 @@ func init() {
       "required": [
         "monitors",
         "pool",
-        "image",
-        "id"
+        "image"
       ],
       "properties": {
         "id": {

@@ -21,9 +21,8 @@ import (
 type Rbd struct {
 
 	// id
-	// Required: true
 	// Read Only: true
-	ID int64 `json:"id"`
+	ID int64 `json:"id,omitempty"`
 
 	// image
 	// Required: true
@@ -50,10 +49,6 @@ type Rbd struct {
 func (m *Rbd) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateID(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateImage(formats); err != nil {
 		res = append(res, err)
 	}
@@ -73,15 +68,6 @@ func (m *Rbd) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *Rbd) validateID(formats strfmt.Registry) error {
-
-	if err := validate.Required("id", "body", int64(m.ID)); err != nil {
-		return err
-	}
-
 	return nil
 }
 

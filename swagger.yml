@@ -83,7 +83,6 @@ definitions:
       - monitors
       - pool
       - image
-      - id
     properties:
       id:
         type: integer
