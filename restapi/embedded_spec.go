@@ -35,6 +35,109 @@ func init() {
     "version": "1.0.0"
   },
   "paths": {
+    "/mount/rbd": {
+      "get": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "list_mounts_rbd",
+        "responses": {
+          "200": {
+            "description": "list of rbd mounts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/mount_rbd"
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "mount_rbd",
+        "parameters": [
+          {
+            "name": "mount",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/mount_rbd"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "RBD mount succeed",
+            "schema": {
+              "$ref": "#/definitions/mount_rbd"
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/mount/rbd/{id}": {
+      "get": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "get_mount_rbd",
+        "responses": {
+          "200": {
+            "description": "RBD mount entry",
+            "schema": {
+              "$ref": "#/definitions/mount_rbd"
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "unmount_rbd",
+        "responses": {
+          "204": {
+            "description": "Unmounted"
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "format": "int64",
+          "name": "id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
     "/rbd": {
       "get": {
         "tags": [
@@ -152,6 +255,37 @@ func init() {
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "mount_rbd": {
+      "type": "object",
+      "required": [
+        "id",
+        "fs_type"
+      ],
+      "properties": {
+        "fs_type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "mount_options": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mountpoint": {
+          "type": "string",
+          "readOnly": true
+        },
+        "ref": {
+          "type": "integer",
+          "format": "int64",
+          "readOnly": true
         }
       }
     },
@@ -309,6 +443,109 @@ func init() {
     "version": "1.0.0"
   },
   "paths": {
+    "/mount/rbd": {
+      "get": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "list_mounts_rbd",
+        "responses": {
+          "200": {
+            "description": "list of rbd mounts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/mount_rbd"
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "mount_rbd",
+        "parameters": [
+          {
+            "name": "mount",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/mount_rbd"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "RBD mount succeed",
+            "schema": {
+              "$ref": "#/definitions/mount_rbd"
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/mount/rbd/{id}": {
+      "get": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "get_mount_rbd",
+        "responses": {
+          "200": {
+            "description": "RBD mount entry",
+            "schema": {
+              "$ref": "#/definitions/mount_rbd"
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "unmount_rbd",
+        "responses": {
+          "204": {
+            "description": "Unmounted"
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "format": "int64",
+          "name": "id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
     "/rbd": {
       "get": {
         "tags": [
@@ -426,6 +663,37 @@ func init() {
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "mount_rbd": {
+      "type": "object",
+      "required": [
+        "id",
+        "fs_type"
+      ],
+      "properties": {
+        "fs_type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "mount_options": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mountpoint": {
+          "type": "string",
+          "readOnly": true
+        },
+        "ref": {
+          "type": "integer",
+          "format": "int64",
+          "readOnly": true
         }
       }
     },

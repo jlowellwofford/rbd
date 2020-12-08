@@ -14,6 +14,7 @@ import (
 	internal "github.com/bensallen/rbd/internal/api"
 	"github.com/bensallen/rbd/models"
 	"github.com/bensallen/rbd/restapi/operations"
+	"github.com/bensallen/rbd/restapi/operations/mounts"
 	"github.com/bensallen/rbd/restapi/operations/rbds"
 )
 
@@ -68,6 +69,35 @@ func configureAPI(api *operations.RbdAPI) http.Handler {
 			return rbds.NewUnmapRbdDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return rbds.NewUnmapRbdNoContent()
+	})
+
+	api.MountsListMountsRbdHandler = mounts.ListMountsRbdHandlerFunc(func(params mounts.ListMountsRbdParams) middleware.Responder {
+		return mounts.NewListMountsRbdOK().WithPayload(internal.MountsRbd.List())
+	})
+
+	api.MountsMountRbdHandler = mounts.MountRbdHandlerFunc(func(params mounts.MountRbdParams) middleware.Responder {
+		var err error
+		var r *models.MountRbd
+		if r, err = internal.MountsRbd.Mount(params.Mount); err != nil {
+			return mounts.NewMountRbdDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return mounts.NewMountRbdCreated().WithPayload(r)
+	})
+
+	api.MountsGetMountRbdHandler = mounts.GetMountRbdHandlerFunc(func(params mounts.GetMountRbdParams) middleware.Responder {
+		var err error
+		var r *models.MountRbd
+		if r, err = internal.MountsRbd.Get(params.ID); err != nil {
+			return mounts.NewGetMountRbdDefault(404).WithPayload(&models.Error{Code: 404, Message: swag.String(err.Error())})
+		}
+		return mounts.NewGetMountRbdOK().WithPayload(r)
+	})
+
+	api.MountsUnmountRbdHandler = mounts.UnmountRbdHandlerFunc(func(params mounts.UnmountRbdParams) middleware.Responder {
+		if err := internal.MountsRbd.Unmount(params.ID); err != nil {
+			return mounts.NewUnmountRbdDefault(500).WithPayload(&models.Error{Code: 404, Message: swag.String(err.Error())})
+		}
+		return mounts.NewUnmountRbdNoContent()
 	})
 
 	api.PreServerShutdown = func() {}

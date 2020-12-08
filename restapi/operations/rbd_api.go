@@ -19,6 +19,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
+	"github.com/bensallen/rbd/restapi/operations/mounts"
 	"github.com/bensallen/rbd/restapi/operations/rbds"
 )
 
@@ -44,8 +45,14 @@ func NewRbdAPI(spec *loads.Document) *RbdAPI {
 
 		JSONProducer: runtime.JSONProducer(),
 
+		MountsGetMountRbdHandler: mounts.GetMountRbdHandlerFunc(func(params mounts.GetMountRbdParams) middleware.Responder {
+			return middleware.NotImplemented("operation mounts.GetMountRbd has not yet been implemented")
+		}),
 		RbdsGetRbdHandler: rbds.GetRbdHandlerFunc(func(params rbds.GetRbdParams) middleware.Responder {
 			return middleware.NotImplemented("operation rbds.GetRbd has not yet been implemented")
+		}),
+		MountsListMountsRbdHandler: mounts.ListMountsRbdHandlerFunc(func(params mounts.ListMountsRbdParams) middleware.Responder {
+			return middleware.NotImplemented("operation mounts.ListMountsRbd has not yet been implemented")
 		}),
 		RbdsListRbdsHandler: rbds.ListRbdsHandlerFunc(func(params rbds.ListRbdsParams) middleware.Responder {
 			return middleware.NotImplemented("operation rbds.ListRbds has not yet been implemented")
@@ -53,8 +60,14 @@ func NewRbdAPI(spec *loads.Document) *RbdAPI {
 		RbdsMapRbdHandler: rbds.MapRbdHandlerFunc(func(params rbds.MapRbdParams) middleware.Responder {
 			return middleware.NotImplemented("operation rbds.MapRbd has not yet been implemented")
 		}),
+		MountsMountRbdHandler: mounts.MountRbdHandlerFunc(func(params mounts.MountRbdParams) middleware.Responder {
+			return middleware.NotImplemented("operation mounts.MountRbd has not yet been implemented")
+		}),
 		RbdsUnmapRbdHandler: rbds.UnmapRbdHandlerFunc(func(params rbds.UnmapRbdParams) middleware.Responder {
 			return middleware.NotImplemented("operation rbds.UnmapRbd has not yet been implemented")
+		}),
+		MountsUnmountRbdHandler: mounts.UnmountRbdHandlerFunc(func(params mounts.UnmountRbdParams) middleware.Responder {
+			return middleware.NotImplemented("operation mounts.UnmountRbd has not yet been implemented")
 		}),
 	}
 }
@@ -90,14 +103,22 @@ type RbdAPI struct {
 	//   - application/github.com.bensallen.rbd.v1+json
 	JSONProducer runtime.Producer
 
+	// MountsGetMountRbdHandler sets the operation handler for the get mount rbd operation
+	MountsGetMountRbdHandler mounts.GetMountRbdHandler
 	// RbdsGetRbdHandler sets the operation handler for the get rbd operation
 	RbdsGetRbdHandler rbds.GetRbdHandler
+	// MountsListMountsRbdHandler sets the operation handler for the list mounts rbd operation
+	MountsListMountsRbdHandler mounts.ListMountsRbdHandler
 	// RbdsListRbdsHandler sets the operation handler for the list rbds operation
 	RbdsListRbdsHandler rbds.ListRbdsHandler
 	// RbdsMapRbdHandler sets the operation handler for the map rbd operation
 	RbdsMapRbdHandler rbds.MapRbdHandler
+	// MountsMountRbdHandler sets the operation handler for the mount rbd operation
+	MountsMountRbdHandler mounts.MountRbdHandler
 	// RbdsUnmapRbdHandler sets the operation handler for the unmap rbd operation
 	RbdsUnmapRbdHandler rbds.UnmapRbdHandler
+	// MountsUnmountRbdHandler sets the operation handler for the unmount rbd operation
+	MountsUnmountRbdHandler mounts.UnmountRbdHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -174,8 +195,14 @@ func (o *RbdAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.MountsGetMountRbdHandler == nil {
+		unregistered = append(unregistered, "mounts.GetMountRbdHandler")
+	}
 	if o.RbdsGetRbdHandler == nil {
 		unregistered = append(unregistered, "rbds.GetRbdHandler")
+	}
+	if o.MountsListMountsRbdHandler == nil {
+		unregistered = append(unregistered, "mounts.ListMountsRbdHandler")
 	}
 	if o.RbdsListRbdsHandler == nil {
 		unregistered = append(unregistered, "rbds.ListRbdsHandler")
@@ -183,8 +210,14 @@ func (o *RbdAPI) Validate() error {
 	if o.RbdsMapRbdHandler == nil {
 		unregistered = append(unregistered, "rbds.MapRbdHandler")
 	}
+	if o.MountsMountRbdHandler == nil {
+		unregistered = append(unregistered, "mounts.MountRbdHandler")
+	}
 	if o.RbdsUnmapRbdHandler == nil {
 		unregistered = append(unregistered, "rbds.UnmapRbdHandler")
+	}
+	if o.MountsUnmountRbdHandler == nil {
+		unregistered = append(unregistered, "mounts.UnmountRbdHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -277,7 +310,15 @@ func (o *RbdAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/mount/rbd/{id}"] = mounts.NewGetMountRbd(o.context, o.MountsGetMountRbdHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/rbd/{id}"] = rbds.NewGetRbd(o.context, o.RbdsGetRbdHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/mount/rbd"] = mounts.NewListMountsRbd(o.context, o.MountsListMountsRbdHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -286,10 +327,18 @@ func (o *RbdAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/rbd"] = rbds.NewMapRbd(o.context, o.RbdsMapRbdHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/mount/rbd"] = mounts.NewMountRbd(o.context, o.MountsMountRbdHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/rbd/{id}"] = rbds.NewUnmapRbd(o.context, o.RbdsUnmapRbdHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/mount/rbd/{id}"] = mounts.NewUnmountRbd(o.context, o.MountsUnmountRbdHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP
