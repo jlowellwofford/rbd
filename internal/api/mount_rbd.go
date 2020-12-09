@@ -11,8 +11,6 @@ import (
 	"github.com/bensallen/rbd/pkg/mount"
 )
 
-const mountDir = "/var/run/rbd-server/mounts"
-
 type MountsRBDType struct {
 	mnts  map[int64]*models.MountRbd
 	mutex *sync.Mutex

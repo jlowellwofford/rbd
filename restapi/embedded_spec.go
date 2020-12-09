@@ -90,7 +90,7 @@ func init() {
         }
       }
     },
-    "/mount/overlay/{lower}": {
+    "/mount/overlay/{id}": {
       "get": {
         "tags": [
           "mounts"
@@ -132,7 +132,7 @@ func init() {
         {
           "type": "integer",
           "format": "int64",
-          "name": "lower",
+          "name": "id",
           "in": "path",
           "required": true
         }
@@ -368,9 +368,18 @@ func init() {
         "lower"
       ],
       "properties": {
-        "lower": {
+        "id": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "readOnly": true
+        },
+        "lower": {
+          "description": "This is an array of RBD IDs, interpreted in order for multiple lower dirs. At least one must be specified.",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
         },
         "mountpoint": {
           "type": "string",
@@ -381,13 +390,10 @@ func init() {
           "format": "int64",
           "readOnly": true
         },
-        "uppers": {
-          "description": "This array of RBD ID's is interpreted in order, and will be layered in the order provided.\n",
-          "type": "array",
-          "items": {
-            "type": "integer",
-            "format": "int64"
-          }
+        "upperdir": {
+          "description": "currently, upperdir is always a directory in mountDir",
+          "type": "string",
+          "readOnly": true
         },
         "workdir": {
           "type": "string",
@@ -638,7 +644,7 @@ func init() {
         }
       }
     },
-    "/mount/overlay/{lower}": {
+    "/mount/overlay/{id}": {
       "get": {
         "tags": [
           "mounts"
@@ -680,7 +686,7 @@ func init() {
         {
           "type": "integer",
           "format": "int64",
-          "name": "lower",
+          "name": "id",
           "in": "path",
           "required": true
         }
@@ -916,9 +922,18 @@ func init() {
         "lower"
       ],
       "properties": {
-        "lower": {
+        "id": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "readOnly": true
+        },
+        "lower": {
+          "description": "This is an array of RBD IDs, interpreted in order for multiple lower dirs. At least one must be specified.",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
         },
         "mountpoint": {
           "type": "string",
@@ -929,13 +944,10 @@ func init() {
           "format": "int64",
           "readOnly": true
         },
-        "uppers": {
-          "description": "This array of RBD ID's is interpreted in order, and will be layered in the order provided.\n",
-          "type": "array",
-          "items": {
-            "type": "integer",
-            "format": "int64"
-          }
+        "upperdir": {
+          "description": "currently, upperdir is always a directory in mountDir",
+          "type": "string",
+          "readOnly": true
         },
         "workdir": {
           "type": "string",

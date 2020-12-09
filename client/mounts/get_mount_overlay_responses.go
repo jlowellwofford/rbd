@@ -55,7 +55,7 @@ type GetMountOverlayOK struct {
 }
 
 func (o *GetMountOverlayOK) Error() string {
-	return fmt.Sprintf("[GET /mount/overlay/{lower}][%d] getMountOverlayOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /mount/overlay/{id}][%d] getMountOverlayOK  %+v", 200, o.Payload)
 }
 
 func (o *GetMountOverlayOK) GetPayload() *models.MountOverlay {
@@ -97,7 +97,7 @@ func (o *GetMountOverlayDefault) Code() int {
 }
 
 func (o *GetMountOverlayDefault) Error() string {
-	return fmt.Sprintf("[GET /mount/overlay/{lower}][%d] get_mount_overlay default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[GET /mount/overlay/{id}][%d] get_mount_overlay default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetMountOverlayDefault) GetPayload() *models.Error {

@@ -342,7 +342,7 @@ func (o *RbdAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/mount/overlay/{lower}"] = mounts.NewGetMountOverlay(o.context, o.MountsGetMountOverlayHandler)
+	o.handlers["GET"]["/mount/overlay/{id}"] = mounts.NewGetMountOverlay(o.context, o.MountsGetMountOverlayHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -382,7 +382,7 @@ func (o *RbdAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/mount/overlay/{lower}"] = mounts.NewUnmountOverlay(o.context, o.MountsUnmountOverlayHandler)
+	o.handlers["DELETE"]["/mount/overlay/{id}"] = mounts.NewUnmountOverlay(o.context, o.MountsUnmountOverlayHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

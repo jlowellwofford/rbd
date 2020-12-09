@@ -16,7 +16,7 @@ import (
 
 // GetMountOverlayURL generates an URL for the get mount overlay operation
 type GetMountOverlayURL struct {
-	Lower int64
+	ID int64
 
 	_basePath string
 	// avoid unkeyed usage
@@ -42,13 +42,13 @@ func (o *GetMountOverlayURL) SetBasePath(bp string) {
 func (o *GetMountOverlayURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/mount/overlay/{lower}"
+	var _path = "/mount/overlay/{id}"
 
-	lower := swag.FormatInt64(o.Lower)
-	if lower != "" {
-		_path = strings.Replace(_path, "{lower}", lower, -1)
+	id := swag.FormatInt64(o.ID)
+	if id != "" {
+		_path = strings.Replace(_path, "{id}", id, -1)
 	} else {
-		return nil, errors.New("lower is required on GetMountOverlayURL")
+		return nil, errors.New("id is required on GetMountOverlayURL")
 	}
 
 	_basePath := o._basePath

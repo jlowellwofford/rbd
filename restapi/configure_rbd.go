@@ -71,6 +71,8 @@ func configureAPI(api *operations.RbdAPI) http.Handler {
 		return rbds.NewUnmapRbdNoContent()
 	})
 
+	// MountsRbd
+
 	api.MountsListMountsRbdHandler = mounts.ListMountsRbdHandlerFunc(func(params mounts.ListMountsRbdParams) middleware.Responder {
 		return mounts.NewListMountsRbdOK().WithPayload(internal.MountsRbd.List())
 	})
@@ -98,6 +100,37 @@ func configureAPI(api *operations.RbdAPI) http.Handler {
 			return mounts.NewUnmountRbdDefault(500).WithPayload(&models.Error{Code: 404, Message: swag.String(err.Error())})
 		}
 		return mounts.NewUnmountRbdNoContent()
+	})
+
+	// MountsOverlay
+
+	api.MountsListMountsOverlayHandler = mounts.ListMountsOverlayHandlerFunc(func(params mounts.ListMountsOverlayParams) middleware.Responder {
+		return mounts.NewListMountsOverlayOK().WithPayload(internal.MountsOverlay.List())
+	})
+
+	api.MountsMountOverlayHandler = mounts.MountOverlayHandlerFunc(func(params mounts.MountOverlayParams) middleware.Responder {
+		var err error
+		var r *models.MountOverlay
+		if r, err = internal.MountsOverlay.Mount(params.Mount); err != nil {
+			return mounts.NewMountOverlayDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return mounts.NewMountOverlayCreated().WithPayload(r)
+	})
+
+	api.MountsGetMountOverlayHandler = mounts.GetMountOverlayHandlerFunc(func(params mounts.GetMountOverlayParams) middleware.Responder {
+		var err error
+		var r *models.MountOverlay
+		if r, err = internal.MountsOverlay.Get(params.ID); err != nil {
+			return mounts.NewGetMountOverlayDefault(404).WithPayload(&models.Error{Code: 404, Message: swag.String(err.Error())})
+		}
+		return mounts.NewGetMountOverlayOK().WithPayload(r)
+	})
+
+	api.MountsUnmountOverlayHandler = mounts.UnmountOverlayHandlerFunc(func(params mounts.UnmountOverlayParams) middleware.Responder {
+		if err := internal.MountsOverlay.Unmount(params.ID); err != nil {
+			return mounts.NewUnmountOverlayDefault(500).WithPayload(&models.Error{Code: 404, Message: swag.String(err.Error())})
+		}
+		return mounts.NewUnmountOverlayNoContent()
 	})
 
 	api.PreServerShutdown = func() {}

@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -67,6 +69,42 @@ func (m *MountRbd) validateFsType(formats strfmt.Registry) error {
 func (m *MountRbd) validateID(formats strfmt.Registry) error {
 
 	if err := validate.Required("id", "body", m.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this mount rbd based on the context it is used
+func (m *MountRbd) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateMountpoint(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRef(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MountRbd) contextValidateMountpoint(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "mountpoint", "body", string(m.Mountpoint)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MountRbd) contextValidateRef(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "ref", "body", int64(m.Ref)); err != nil {
 		return err
 	}
 

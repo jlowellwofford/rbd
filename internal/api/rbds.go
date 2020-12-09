@@ -128,12 +128,7 @@ func (r *RbdsType) Unmap(id int64) (err error) {
 func (r *RbdsType) RefAdd(id, n int64) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-
-	var rbd *models.Rbd
-	var ok bool
-
-	if rbd, ok = r.rbds[id]; !ok {
-		return
+	if rbd, ok := r.rbds[id]; ok {
+		rbd.Refs += n
 	}
-	rbd.Refs += n
 }

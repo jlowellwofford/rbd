@@ -34,7 +34,7 @@ type GetMountOverlayParams struct {
 	  Required: true
 	  In: path
 	*/
-	Lower int64
+	ID int64
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -46,8 +46,8 @@ func (o *GetMountOverlayParams) BindRequest(r *http.Request, route *middleware.M
 
 	o.HTTPRequest = r
 
-	rLower, rhkLower, _ := route.Params.GetOK("lower")
-	if err := o.bindLower(rLower, rhkLower, route.Formats); err != nil {
+	rID, rhkID, _ := route.Params.GetOK("id")
+	if err := o.bindID(rID, rhkID, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -57,8 +57,8 @@ func (o *GetMountOverlayParams) BindRequest(r *http.Request, route *middleware.M
 	return nil
 }
 
-// bindLower binds and validates parameter Lower from path.
-func (o *GetMountOverlayParams) bindLower(rawData []string, hasKey bool, formats strfmt.Registry) error {
+// bindID binds and validates parameter ID from path.
+func (o *GetMountOverlayParams) bindID(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -69,9 +69,9 @@ func (o *GetMountOverlayParams) bindLower(rawData []string, hasKey bool, formats
 
 	value, err := swag.ConvertInt64(raw)
 	if err != nil {
-		return errors.InvalidType("lower", "path", "int64", raw)
+		return errors.InvalidType("id", "path", "int64", raw)
 	}
-	o.Lower = value
+	o.ID = value
 
 	return nil
 }

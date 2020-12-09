@@ -61,8 +61,8 @@ for the get mount overlay operation typically these are written to a http.Reques
 */
 type GetMountOverlayParams struct {
 
-	/*Lower*/
-	Lower int64
+	/*ID*/
+	ID int64
 
 	timeout    time.Duration
 	Context    context.Context
@@ -102,15 +102,15 @@ func (o *GetMountOverlayParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithLower adds the lower to the get mount overlay params
-func (o *GetMountOverlayParams) WithLower(lower int64) *GetMountOverlayParams {
-	o.SetLower(lower)
+// WithID adds the id to the get mount overlay params
+func (o *GetMountOverlayParams) WithID(id int64) *GetMountOverlayParams {
+	o.SetID(id)
 	return o
 }
 
-// SetLower adds the lower to the get mount overlay params
-func (o *GetMountOverlayParams) SetLower(lower int64) {
-	o.Lower = lower
+// SetID adds the id to the get mount overlay params
+func (o *GetMountOverlayParams) SetID(id int64) {
+	o.ID = id
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -121,8 +121,8 @@ func (o *GetMountOverlayParams) WriteToRequest(r runtime.ClientRequest, reg strf
 	}
 	var res []error
 
-	// path param lower
-	if err := r.SetPathParam("lower", swag.FormatInt64(o.Lower)); err != nil {
+	// path param id
+	if err := r.SetPathParam("id", swag.FormatInt64(o.ID)); err != nil {
 		return err
 	}
 

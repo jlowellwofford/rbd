@@ -29,7 +29,7 @@ func NewUnmountOverlay(ctx *middleware.Context, handler UnmountOverlayHandler) *
 	return &UnmountOverlay{Context: ctx, Handler: handler}
 }
 
-/*UnmountOverlay swagger:route DELETE /mount/overlay/{lower} mounts unmountOverlay
+/*UnmountOverlay swagger:route DELETE /mount/overlay/{id} mounts unmountOverlay
 
 UnmountOverlay unmount overlay API
 
@@ -45,14 +45,12 @@ func (o *UnmountOverlay) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewUnmountOverlayParams()
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
 	res := o.Handler.Handle(Params) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

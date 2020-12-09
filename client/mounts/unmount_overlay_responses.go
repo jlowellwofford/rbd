@@ -54,7 +54,7 @@ type UnmountOverlayNoContent struct {
 }
 
 func (o *UnmountOverlayNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /mount/overlay/{lower}][%d] unmountOverlayNoContent ", 204)
+	return fmt.Sprintf("[DELETE /mount/overlay/{id}][%d] unmountOverlayNoContent ", 204)
 }
 
 func (o *UnmountOverlayNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -85,7 +85,7 @@ func (o *UnmountOverlayDefault) Code() int {
 }
 
 func (o *UnmountOverlayDefault) Error() string {
-	return fmt.Sprintf("[DELETE /mount/overlay/{lower}][%d] unmount_overlay default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[DELETE /mount/overlay/{id}][%d] unmount_overlay default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *UnmountOverlayDefault) GetPayload() *models.Error {

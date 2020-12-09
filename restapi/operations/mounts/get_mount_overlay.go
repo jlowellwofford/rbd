@@ -29,7 +29,7 @@ func NewGetMountOverlay(ctx *middleware.Context, handler GetMountOverlayHandler)
 	return &GetMountOverlay{Context: ctx, Handler: handler}
 }
 
-/*GetMountOverlay swagger:route GET /mount/overlay/{lower} mounts getMountOverlay
+/*GetMountOverlay swagger:route GET /mount/overlay/{id} mounts getMountOverlay
 
 GetMountOverlay get mount overlay API
 
@@ -45,14 +45,12 @@ func (o *GetMountOverlay) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewGetMountOverlayParams()
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
 	res := o.Handler.Handle(Params) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

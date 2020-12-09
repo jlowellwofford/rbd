@@ -56,7 +56,7 @@ func (a *Client) GetMountOverlay(params *GetMountOverlayParams) (*GetMountOverla
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "get_mount_overlay",
 		Method:             "GET",
-		PathPattern:        "/mount/overlay/{lower}",
+		PathPattern:        "/mount/overlay/{id}",
 		ProducesMediaTypes: []string{"application/github.com.bensallen.rbd.v1+json"},
 		ConsumesMediaTypes: []string{"application/github.com.bensallen.rbd.v1+json"},
 		Schemes:            []string{"http", "https"},
@@ -254,7 +254,7 @@ func (a *Client) UnmountOverlay(params *UnmountOverlayParams) (*UnmountOverlayNo
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "unmount_overlay",
 		Method:             "DELETE",
-		PathPattern:        "/mount/overlay/{lower}",
+		PathPattern:        "/mount/overlay/{id}",
 		ProducesMediaTypes: []string{"application/github.com.bensallen.rbd.v1+json"},
 		ConsumesMediaTypes: []string{"application/github.com.bensallen.rbd.v1+json"},
 		Schemes:            []string{"http", "https"},

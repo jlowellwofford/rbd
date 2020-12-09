@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -22,9 +24,13 @@ import (
 // swagger:model mount_overlay
 type MountOverlay struct {
 
-	// lower
+	// id
+	// Read Only: true
+	ID int64 `json:"id,omitempty"`
+
+	// This is an array of RBD IDs, interpreted in order for multiple lower dirs. At least one must be specified.
 	// Required: true
-	Lower *int64 `json:"lower"`
+	Lower []int64 `json:"lower"`
 
 	// mountpoint
 	// Read Only: true
@@ -34,9 +40,9 @@ type MountOverlay struct {
 	// Read Only: true
 	Ref int64 `json:"ref,omitempty"`
 
-	// This array of RBD ID's is interpreted in order, and will be layered in the order provided.
-	//
-	Uppers []int64 `json:"uppers"`
+	// currently, upperdir is always a directory in mountDir
+	// Read Only: true
+	Upperdir string `json:"upperdir,omitempty"`
 
 	// workdir
 	// Read Only: true
@@ -60,6 +66,81 @@ func (m *MountOverlay) Validate(formats strfmt.Registry) error {
 func (m *MountOverlay) validateLower(formats strfmt.Registry) error {
 
 	if err := validate.Required("lower", "body", m.Lower); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this mount overlay based on the context it is used
+func (m *MountOverlay) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateID(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMountpoint(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRef(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpperdir(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateWorkdir(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MountOverlay) contextValidateID(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "id", "body", int64(m.ID)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MountOverlay) contextValidateMountpoint(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "mountpoint", "body", string(m.Mountpoint)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MountOverlay) contextValidateRef(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "ref", "body", int64(m.Ref)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MountOverlay) contextValidateUpperdir(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "upperdir", "body", string(m.Upperdir)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MountOverlay) contextValidateWorkdir(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "workdir", "body", string(m.Workdir)); err != nil {
 		return err
 	}
 

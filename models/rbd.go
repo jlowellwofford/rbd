@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -111,7 +112,6 @@ func (m *Rbd) validateMonitors(formats strfmt.Registry) error {
 }
 
 func (m *Rbd) validateOptions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Options) { // not required
 		return nil
 	}
@@ -135,6 +135,60 @@ func (m *Rbd) validatePool(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("pool", "body", string(*m.Pool), 1); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this rbd based on the context it is used
+func (m *Rbd) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateID(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOptions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRefs(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Rbd) contextValidateID(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "id", "body", int64(m.ID)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Rbd) contextValidateOptions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Options != nil {
+		if err := m.Options.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("options")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Rbd) contextValidateRefs(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "refs", "body", int64(m.Refs)); err != nil {
 		return err
 	}
 

@@ -61,8 +61,8 @@ for the unmount overlay operation typically these are written to a http.Request
 */
 type UnmountOverlayParams struct {
 
-	/*Lower*/
-	Lower int64
+	/*ID*/
+	ID int64
 
 	timeout    time.Duration
 	Context    context.Context
@@ -102,15 +102,15 @@ func (o *UnmountOverlayParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithLower adds the lower to the unmount overlay params
-func (o *UnmountOverlayParams) WithLower(lower int64) *UnmountOverlayParams {
-	o.SetLower(lower)
+// WithID adds the id to the unmount overlay params
+func (o *UnmountOverlayParams) WithID(id int64) *UnmountOverlayParams {
+	o.SetID(id)
 	return o
 }
 
-// SetLower adds the lower to the unmount overlay params
-func (o *UnmountOverlayParams) SetLower(lower int64) {
-	o.Lower = lower
+// SetID adds the id to the unmount overlay params
+func (o *UnmountOverlayParams) SetID(id int64) {
+	o.ID = id
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -121,8 +121,8 @@ func (o *UnmountOverlayParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 	}
 	var res []error
 
-	// path param lower
-	if err := r.SetPathParam("lower", swag.FormatInt64(o.Lower)); err != nil {
+	// path param id
+	if err := r.SetPathParam("id", swag.FormatInt64(o.ID)); err != nil {
 		return err
 	}
 
