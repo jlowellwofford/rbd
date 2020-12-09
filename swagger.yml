@@ -507,6 +507,8 @@ paths:
         required: true
 
     get:
+      tags:
+        - containers
       description: Get a container definition
       operationId: get_container
       responses:
@@ -520,6 +522,8 @@ paths:
             $ref: "#/definitions/error"
 
     delete:
+      tags:
+        - containers
       description: |
         Delete a container defition.  
         This will stop running containers.
@@ -546,6 +550,8 @@ paths:
         required: true
 
     get:
+      tags:
+        - containers
       description: |
         Request a (valid) state for a container. 
         Valid states to request include: `running`, `exited`, `paused` (paused is not yet implemented)
