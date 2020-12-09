@@ -98,7 +98,7 @@ func (m *MountsOverlayType) Mount(mnt *models.MountOverlay) (r *models.MountOver
 	for _, i := range mnt.Lower {
 		MountsRbd.RefAdd(i, 1)
 	}
-	return
+	return mnt, nil
 }
 
 func (m *MountsOverlayType) Unmount(id int64) (err error) {
