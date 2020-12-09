@@ -78,6 +78,9 @@ definitions:
         type: string
 
   rbd:
+    description: |
+      rbd describes an RBD map.  To successfully map, at least one monitor, pool and image must be specified.
+      Additionally, you will need options.name and options.secret specified.
     type: object
     required:
       - monitors
@@ -111,6 +114,9 @@ definitions:
         $ref: "#/definitions/rbd_options"
     
   mount_rbd:
+    description:
+      mount_rbd describes an RBD mount.  This must have at least and RBD ID associated with it
+      (which becomes the mount's ID), and a provided filesystem type.
     type: object
     required:
       - id
@@ -124,7 +130,8 @@ definitions:
         format: int64
         readOnly: true
       # external
-      id: # must be a valid rbd dev id
+      id: 
+        description: must be a valid rbd device id
         type: integer
         format: int64
       fs_type:
@@ -133,6 +140,41 @@ definitions:
         type: array
         items:
           type: string
+
+  mount_overlay:
+    description: |
+      `mount_overlay` describes an Overlayfs mount.  All mount points must be RBD ID's.
+      At very least, `lower` must be specified.  If `upper` length is zero, no `upper`
+      mounts will be used.  `workdir` will be assigned automatically.
+
+      Overlay mounts are identified by their `lower` ID.
+    type: object
+    required:
+      - lower
+    properties:
+      # internal
+      mountpoint:
+        type: string
+        readOnly: true
+      workdir:
+        type: string
+        readOnly: true
+      ref:
+        type: integer
+        format: int64
+        readOnly: true
+      # external
+      lower:
+        type: integer #id
+        format: int64
+      uppers:
+        description: |
+          This array of RBD ID's is interpreted in order, and will be layered in the order provided.
+        type: array
+        items:
+          type: integer #id
+          format: int64
+
 
   error:
     type: object
@@ -279,6 +321,76 @@ paths:
       tags:
         - mounts
       operationId: unmount_rbd
+      responses:
+        204:
+          description: Unmounted
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"
+  
+  /mount/overlay:
+
+    get:
+      tags:
+        - mounts
+      operationId: list_mounts_overlay
+      responses:
+        200:
+          description: list of overlay mounts
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/mount_overlay"
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"
+
+    post:
+      tags:
+        - mounts
+      operationId: mount_overlay
+      parameters:
+        - name: mount
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/mount_overlay"
+      responses:
+        201:
+          description: Overlay mount succeed
+          schema:
+            $ref: "#/definitions/mount_overlay"
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"
+
+  /mount/overlay/{lower}:
+    parameters:
+      - type: integer
+        format: int64
+        name: lower
+        in: path
+        required: true
+    get:
+      tags:
+        - mounts
+      operationId: get_mount_overlay
+      responses:
+        200:
+          description: Overlay mount entry
+          schema:
+            $ref: "#/definitions/mount_overlay"
+        default: 
+          description: error
+          schema:
+            $ref: "#/definitions/error"
+    delete:
+      tags:
+        - mounts
+      operationId: unmount_overlay
       responses:
         204:
           description: Unmounted

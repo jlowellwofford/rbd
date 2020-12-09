@@ -45,11 +45,17 @@ func NewRbdAPI(spec *loads.Document) *RbdAPI {
 
 		JSONProducer: runtime.JSONProducer(),
 
+		MountsGetMountOverlayHandler: mounts.GetMountOverlayHandlerFunc(func(params mounts.GetMountOverlayParams) middleware.Responder {
+			return middleware.NotImplemented("operation mounts.GetMountOverlay has not yet been implemented")
+		}),
 		MountsGetMountRbdHandler: mounts.GetMountRbdHandlerFunc(func(params mounts.GetMountRbdParams) middleware.Responder {
 			return middleware.NotImplemented("operation mounts.GetMountRbd has not yet been implemented")
 		}),
 		RbdsGetRbdHandler: rbds.GetRbdHandlerFunc(func(params rbds.GetRbdParams) middleware.Responder {
 			return middleware.NotImplemented("operation rbds.GetRbd has not yet been implemented")
+		}),
+		MountsListMountsOverlayHandler: mounts.ListMountsOverlayHandlerFunc(func(params mounts.ListMountsOverlayParams) middleware.Responder {
+			return middleware.NotImplemented("operation mounts.ListMountsOverlay has not yet been implemented")
 		}),
 		MountsListMountsRbdHandler: mounts.ListMountsRbdHandlerFunc(func(params mounts.ListMountsRbdParams) middleware.Responder {
 			return middleware.NotImplemented("operation mounts.ListMountsRbd has not yet been implemented")
@@ -60,11 +66,17 @@ func NewRbdAPI(spec *loads.Document) *RbdAPI {
 		RbdsMapRbdHandler: rbds.MapRbdHandlerFunc(func(params rbds.MapRbdParams) middleware.Responder {
 			return middleware.NotImplemented("operation rbds.MapRbd has not yet been implemented")
 		}),
+		MountsMountOverlayHandler: mounts.MountOverlayHandlerFunc(func(params mounts.MountOverlayParams) middleware.Responder {
+			return middleware.NotImplemented("operation mounts.MountOverlay has not yet been implemented")
+		}),
 		MountsMountRbdHandler: mounts.MountRbdHandlerFunc(func(params mounts.MountRbdParams) middleware.Responder {
 			return middleware.NotImplemented("operation mounts.MountRbd has not yet been implemented")
 		}),
 		RbdsUnmapRbdHandler: rbds.UnmapRbdHandlerFunc(func(params rbds.UnmapRbdParams) middleware.Responder {
 			return middleware.NotImplemented("operation rbds.UnmapRbd has not yet been implemented")
+		}),
+		MountsUnmountOverlayHandler: mounts.UnmountOverlayHandlerFunc(func(params mounts.UnmountOverlayParams) middleware.Responder {
+			return middleware.NotImplemented("operation mounts.UnmountOverlay has not yet been implemented")
 		}),
 		MountsUnmountRbdHandler: mounts.UnmountRbdHandlerFunc(func(params mounts.UnmountRbdParams) middleware.Responder {
 			return middleware.NotImplemented("operation mounts.UnmountRbd has not yet been implemented")
@@ -103,20 +115,28 @@ type RbdAPI struct {
 	//   - application/github.com.bensallen.rbd.v1+json
 	JSONProducer runtime.Producer
 
+	// MountsGetMountOverlayHandler sets the operation handler for the get mount overlay operation
+	MountsGetMountOverlayHandler mounts.GetMountOverlayHandler
 	// MountsGetMountRbdHandler sets the operation handler for the get mount rbd operation
 	MountsGetMountRbdHandler mounts.GetMountRbdHandler
 	// RbdsGetRbdHandler sets the operation handler for the get rbd operation
 	RbdsGetRbdHandler rbds.GetRbdHandler
+	// MountsListMountsOverlayHandler sets the operation handler for the list mounts overlay operation
+	MountsListMountsOverlayHandler mounts.ListMountsOverlayHandler
 	// MountsListMountsRbdHandler sets the operation handler for the list mounts rbd operation
 	MountsListMountsRbdHandler mounts.ListMountsRbdHandler
 	// RbdsListRbdsHandler sets the operation handler for the list rbds operation
 	RbdsListRbdsHandler rbds.ListRbdsHandler
 	// RbdsMapRbdHandler sets the operation handler for the map rbd operation
 	RbdsMapRbdHandler rbds.MapRbdHandler
+	// MountsMountOverlayHandler sets the operation handler for the mount overlay operation
+	MountsMountOverlayHandler mounts.MountOverlayHandler
 	// MountsMountRbdHandler sets the operation handler for the mount rbd operation
 	MountsMountRbdHandler mounts.MountRbdHandler
 	// RbdsUnmapRbdHandler sets the operation handler for the unmap rbd operation
 	RbdsUnmapRbdHandler rbds.UnmapRbdHandler
+	// MountsUnmountOverlayHandler sets the operation handler for the unmount overlay operation
+	MountsUnmountOverlayHandler mounts.UnmountOverlayHandler
 	// MountsUnmountRbdHandler sets the operation handler for the unmount rbd operation
 	MountsUnmountRbdHandler mounts.UnmountRbdHandler
 	// ServeError is called when an error is received, there is a default handler
@@ -195,11 +215,17 @@ func (o *RbdAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.MountsGetMountOverlayHandler == nil {
+		unregistered = append(unregistered, "mounts.GetMountOverlayHandler")
+	}
 	if o.MountsGetMountRbdHandler == nil {
 		unregistered = append(unregistered, "mounts.GetMountRbdHandler")
 	}
 	if o.RbdsGetRbdHandler == nil {
 		unregistered = append(unregistered, "rbds.GetRbdHandler")
+	}
+	if o.MountsListMountsOverlayHandler == nil {
+		unregistered = append(unregistered, "mounts.ListMountsOverlayHandler")
 	}
 	if o.MountsListMountsRbdHandler == nil {
 		unregistered = append(unregistered, "mounts.ListMountsRbdHandler")
@@ -210,11 +236,17 @@ func (o *RbdAPI) Validate() error {
 	if o.RbdsMapRbdHandler == nil {
 		unregistered = append(unregistered, "rbds.MapRbdHandler")
 	}
+	if o.MountsMountOverlayHandler == nil {
+		unregistered = append(unregistered, "mounts.MountOverlayHandler")
+	}
 	if o.MountsMountRbdHandler == nil {
 		unregistered = append(unregistered, "mounts.MountRbdHandler")
 	}
 	if o.RbdsUnmapRbdHandler == nil {
 		unregistered = append(unregistered, "rbds.UnmapRbdHandler")
+	}
+	if o.MountsUnmountOverlayHandler == nil {
+		unregistered = append(unregistered, "mounts.UnmountOverlayHandler")
 	}
 	if o.MountsUnmountRbdHandler == nil {
 		unregistered = append(unregistered, "mounts.UnmountRbdHandler")
@@ -310,11 +342,19 @@ func (o *RbdAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/mount/overlay/{lower}"] = mounts.NewGetMountOverlay(o.context, o.MountsGetMountOverlayHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/mount/rbd/{id}"] = mounts.NewGetMountRbd(o.context, o.MountsGetMountRbdHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/rbd/{id}"] = rbds.NewGetRbd(o.context, o.RbdsGetRbdHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/mount/overlay"] = mounts.NewListMountsOverlay(o.context, o.MountsListMountsOverlayHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -330,11 +370,19 @@ func (o *RbdAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
+	o.handlers["POST"]["/mount/overlay"] = mounts.NewMountOverlay(o.context, o.MountsMountOverlayHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
 	o.handlers["POST"]["/mount/rbd"] = mounts.NewMountRbd(o.context, o.MountsMountRbdHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/rbd/{id}"] = rbds.NewUnmapRbd(o.context, o.RbdsUnmapRbdHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/mount/overlay/{lower}"] = mounts.NewUnmountOverlay(o.context, o.MountsUnmountOverlayHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

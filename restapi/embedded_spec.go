@@ -35,6 +35,109 @@ func init() {
     "version": "1.0.0"
   },
   "paths": {
+    "/mount/overlay": {
+      "get": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "list_mounts_overlay",
+        "responses": {
+          "200": {
+            "description": "list of overlay mounts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/mount_overlay"
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "mount_overlay",
+        "parameters": [
+          {
+            "name": "mount",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/mount_overlay"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Overlay mount succeed",
+            "schema": {
+              "$ref": "#/definitions/mount_overlay"
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/mount/overlay/{lower}": {
+      "get": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "get_mount_overlay",
+        "responses": {
+          "200": {
+            "description": "Overlay mount entry",
+            "schema": {
+              "$ref": "#/definitions/mount_overlay"
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "unmount_overlay",
+        "responses": {
+          "204": {
+            "description": "Unmounted"
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "format": "int64",
+          "name": "lower",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
     "/mount/rbd": {
       "get": {
         "tags": [
@@ -258,7 +361,42 @@ func init() {
         }
       }
     },
+    "mount_overlay": {
+      "description": "` + "`" + `mount_overlay` + "`" + ` describes an Overlayfs mount.  All mount points must be RBD ID's.\nAt very least, ` + "`" + `lower` + "`" + ` must be specified.  If ` + "`" + `upper` + "`" + ` length is zero, no ` + "`" + `upper` + "`" + `\nmounts will be used.  ` + "`" + `workdir` + "`" + ` will be assigned automatically.\n\nOverlay mounts are identified by their ` + "`" + `lower` + "`" + ` ID.\n",
+      "type": "object",
+      "required": [
+        "lower"
+      ],
+      "properties": {
+        "lower": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "mountpoint": {
+          "type": "string",
+          "readOnly": true
+        },
+        "ref": {
+          "type": "integer",
+          "format": "int64",
+          "readOnly": true
+        },
+        "uppers": {
+          "description": "This array of RBD ID's is interpreted in order, and will be layered in the order provided.\n",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "workdir": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
     "mount_rbd": {
+      "description": "mount_rbd describes an RBD mount.  This must have at least and RBD ID associated with it (which becomes the mount's ID), and a provided filesystem type.",
       "type": "object",
       "required": [
         "id",
@@ -269,6 +407,7 @@ func init() {
           "type": "string"
         },
         "id": {
+          "description": "must be a valid rbd device id",
           "type": "integer",
           "format": "int64"
         },
@@ -290,6 +429,7 @@ func init() {
       }
     },
     "rbd": {
+      "description": "rbd describes an RBD map.  To successfully map, at least one monitor, pool and image must be specified.\nAdditionally, you will need options.name and options.secret specified.\n",
       "type": "object",
       "required": [
         "monitors",
@@ -443,6 +583,109 @@ func init() {
     "version": "1.0.0"
   },
   "paths": {
+    "/mount/overlay": {
+      "get": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "list_mounts_overlay",
+        "responses": {
+          "200": {
+            "description": "list of overlay mounts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/mount_overlay"
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "mount_overlay",
+        "parameters": [
+          {
+            "name": "mount",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/mount_overlay"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Overlay mount succeed",
+            "schema": {
+              "$ref": "#/definitions/mount_overlay"
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/mount/overlay/{lower}": {
+      "get": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "get_mount_overlay",
+        "responses": {
+          "200": {
+            "description": "Overlay mount entry",
+            "schema": {
+              "$ref": "#/definitions/mount_overlay"
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "mounts"
+        ],
+        "operationId": "unmount_overlay",
+        "responses": {
+          "204": {
+            "description": "Unmounted"
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "format": "int64",
+          "name": "lower",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
     "/mount/rbd": {
       "get": {
         "tags": [
@@ -666,7 +909,42 @@ func init() {
         }
       }
     },
+    "mount_overlay": {
+      "description": "` + "`" + `mount_overlay` + "`" + ` describes an Overlayfs mount.  All mount points must be RBD ID's.\nAt very least, ` + "`" + `lower` + "`" + ` must be specified.  If ` + "`" + `upper` + "`" + ` length is zero, no ` + "`" + `upper` + "`" + `\nmounts will be used.  ` + "`" + `workdir` + "`" + ` will be assigned automatically.\n\nOverlay mounts are identified by their ` + "`" + `lower` + "`" + ` ID.\n",
+      "type": "object",
+      "required": [
+        "lower"
+      ],
+      "properties": {
+        "lower": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "mountpoint": {
+          "type": "string",
+          "readOnly": true
+        },
+        "ref": {
+          "type": "integer",
+          "format": "int64",
+          "readOnly": true
+        },
+        "uppers": {
+          "description": "This array of RBD ID's is interpreted in order, and will be layered in the order provided.\n",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "workdir": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
     "mount_rbd": {
+      "description": "mount_rbd describes an RBD mount.  This must have at least and RBD ID associated with it (which becomes the mount's ID), and a provided filesystem type.",
       "type": "object",
       "required": [
         "id",
@@ -677,6 +955,7 @@ func init() {
           "type": "string"
         },
         "id": {
+          "description": "must be a valid rbd device id",
           "type": "integer",
           "format": "int64"
         },
@@ -698,6 +977,7 @@ func init() {
       }
     },
     "rbd": {
+      "description": "rbd describes an RBD map.  To successfully map, at least one monitor, pool and image must be specified.\nAdditionally, you will need options.name and options.secret specified.\n",
       "type": "object",
       "required": [
         "monitors",

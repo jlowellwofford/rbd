@@ -14,7 +14,9 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// Rbd rbd
+// Rbd rbd describes an RBD map.  To successfully map, at least one monitor, pool and image must be specified.
+// Additionally, you will need options.name and options.secret specified.
+//
 //
 // swagger:model rbd
 type Rbd struct {

@@ -12,7 +12,7 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// MountRbd mount rbd
+// MountRbd mount_rbd describes an RBD mount.  This must have at least and RBD ID associated with it (which becomes the mount's ID), and a provided filesystem type.
 //
 // swagger:model mount_rbd
 type MountRbd struct {
@@ -21,7 +21,7 @@ type MountRbd struct {
 	// Required: true
 	FsType *string `json:"fs_type"`
 
-	// id
+	// must be a valid rbd device id
 	// Required: true
 	ID *int64 `json:"id"`
 
