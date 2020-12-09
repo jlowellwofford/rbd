@@ -10,7 +10,9 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
+	"github.com/bensallen/rbd/client/containers"
 	"github.com/bensallen/rbd/client/mounts"
+	"github.com/bensallen/rbd/client/operations"
 	"github.com/bensallen/rbd/client/rbds"
 )
 
@@ -56,7 +58,9 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Rbd {
 
 	cli := new(Rbd)
 	cli.Transport = transport
+	cli.Containers = containers.New(transport, formats)
 	cli.Mounts = mounts.New(transport, formats)
+	cli.Operations = operations.New(transport, formats)
 	cli.Rbds = rbds.New(transport, formats)
 	return cli
 }
@@ -102,7 +106,11 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 
 // Rbd is a client for rbd
 type Rbd struct {
+	Containers containers.ClientService
+
 	Mounts mounts.ClientService
+
+	Operations operations.ClientService
 
 	Rbds rbds.ClientService
 
@@ -112,6 +120,8 @@ type Rbd struct {
 // SetTransport changes the transport on the client and all its subresources
 func (c *Rbd) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
+	c.Containers.SetTransport(transport)
 	c.Mounts.SetTransport(transport)
+	c.Operations.SetTransport(transport)
 	c.Rbds.SetTransport(transport)
 }

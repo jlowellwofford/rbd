@@ -19,6 +19,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
+	"github.com/bensallen/rbd/restapi/operations/containers"
 	"github.com/bensallen/rbd/restapi/operations/mounts"
 	"github.com/bensallen/rbd/restapi/operations/rbds"
 )
@@ -45,6 +46,15 @@ func NewRbdAPI(spec *loads.Document) *RbdAPI {
 
 		JSONProducer: runtime.JSONProducer(),
 
+		ContainersCreateContainerHandler: containers.CreateContainerHandlerFunc(func(params containers.CreateContainerParams) middleware.Responder {
+			return middleware.NotImplemented("operation containers.CreateContainer has not yet been implemented")
+		}),
+		DeleteContainerHandler: DeleteContainerHandlerFunc(func(params DeleteContainerParams) middleware.Responder {
+			return middleware.NotImplemented("operation DeleteContainer has not yet been implemented")
+		}),
+		GetContainerHandler: GetContainerHandlerFunc(func(params GetContainerParams) middleware.Responder {
+			return middleware.NotImplemented("operation GetContainer has not yet been implemented")
+		}),
 		MountsGetMountOverlayHandler: mounts.GetMountOverlayHandlerFunc(func(params mounts.GetMountOverlayParams) middleware.Responder {
 			return middleware.NotImplemented("operation mounts.GetMountOverlay has not yet been implemented")
 		}),
@@ -53,6 +63,9 @@ func NewRbdAPI(spec *loads.Document) *RbdAPI {
 		}),
 		RbdsGetRbdHandler: rbds.GetRbdHandlerFunc(func(params rbds.GetRbdParams) middleware.Responder {
 			return middleware.NotImplemented("operation rbds.GetRbd has not yet been implemented")
+		}),
+		ContainersListContainersHandler: containers.ListContainersHandlerFunc(func(params containers.ListContainersParams) middleware.Responder {
+			return middleware.NotImplemented("operation containers.ListContainers has not yet been implemented")
 		}),
 		MountsListMountsOverlayHandler: mounts.ListMountsOverlayHandlerFunc(func(params mounts.ListMountsOverlayParams) middleware.Responder {
 			return middleware.NotImplemented("operation mounts.ListMountsOverlay has not yet been implemented")
@@ -71,6 +84,9 @@ func NewRbdAPI(spec *loads.Document) *RbdAPI {
 		}),
 		MountsMountRbdHandler: mounts.MountRbdHandlerFunc(func(params mounts.MountRbdParams) middleware.Responder {
 			return middleware.NotImplemented("operation mounts.MountRbd has not yet been implemented")
+		}),
+		SetContainerStateHandler: SetContainerStateHandlerFunc(func(params SetContainerStateParams) middleware.Responder {
+			return middleware.NotImplemented("operation SetContainerState has not yet been implemented")
 		}),
 		RbdsUnmapRbdHandler: rbds.UnmapRbdHandlerFunc(func(params rbds.UnmapRbdParams) middleware.Responder {
 			return middleware.NotImplemented("operation rbds.UnmapRbd has not yet been implemented")
@@ -115,12 +131,20 @@ type RbdAPI struct {
 	//   - application/github.com.bensallen.rbd.v1+json
 	JSONProducer runtime.Producer
 
+	// ContainersCreateContainerHandler sets the operation handler for the create container operation
+	ContainersCreateContainerHandler containers.CreateContainerHandler
+	// DeleteContainerHandler sets the operation handler for the delete container operation
+	DeleteContainerHandler DeleteContainerHandler
+	// GetContainerHandler sets the operation handler for the get container operation
+	GetContainerHandler GetContainerHandler
 	// MountsGetMountOverlayHandler sets the operation handler for the get mount overlay operation
 	MountsGetMountOverlayHandler mounts.GetMountOverlayHandler
 	// MountsGetMountRbdHandler sets the operation handler for the get mount rbd operation
 	MountsGetMountRbdHandler mounts.GetMountRbdHandler
 	// RbdsGetRbdHandler sets the operation handler for the get rbd operation
 	RbdsGetRbdHandler rbds.GetRbdHandler
+	// ContainersListContainersHandler sets the operation handler for the list containers operation
+	ContainersListContainersHandler containers.ListContainersHandler
 	// MountsListMountsOverlayHandler sets the operation handler for the list mounts overlay operation
 	MountsListMountsOverlayHandler mounts.ListMountsOverlayHandler
 	// MountsListMountsRbdHandler sets the operation handler for the list mounts rbd operation
@@ -133,6 +157,8 @@ type RbdAPI struct {
 	MountsMountOverlayHandler mounts.MountOverlayHandler
 	// MountsMountRbdHandler sets the operation handler for the mount rbd operation
 	MountsMountRbdHandler mounts.MountRbdHandler
+	// SetContainerStateHandler sets the operation handler for the set container state operation
+	SetContainerStateHandler SetContainerStateHandler
 	// RbdsUnmapRbdHandler sets the operation handler for the unmap rbd operation
 	RbdsUnmapRbdHandler rbds.UnmapRbdHandler
 	// MountsUnmountOverlayHandler sets the operation handler for the unmount overlay operation
@@ -215,6 +241,15 @@ func (o *RbdAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.ContainersCreateContainerHandler == nil {
+		unregistered = append(unregistered, "containers.CreateContainerHandler")
+	}
+	if o.DeleteContainerHandler == nil {
+		unregistered = append(unregistered, "DeleteContainerHandler")
+	}
+	if o.GetContainerHandler == nil {
+		unregistered = append(unregistered, "GetContainerHandler")
+	}
 	if o.MountsGetMountOverlayHandler == nil {
 		unregistered = append(unregistered, "mounts.GetMountOverlayHandler")
 	}
@@ -223,6 +258,9 @@ func (o *RbdAPI) Validate() error {
 	}
 	if o.RbdsGetRbdHandler == nil {
 		unregistered = append(unregistered, "rbds.GetRbdHandler")
+	}
+	if o.ContainersListContainersHandler == nil {
+		unregistered = append(unregistered, "containers.ListContainersHandler")
 	}
 	if o.MountsListMountsOverlayHandler == nil {
 		unregistered = append(unregistered, "mounts.ListMountsOverlayHandler")
@@ -241,6 +279,9 @@ func (o *RbdAPI) Validate() error {
 	}
 	if o.MountsMountRbdHandler == nil {
 		unregistered = append(unregistered, "mounts.MountRbdHandler")
+	}
+	if o.SetContainerStateHandler == nil {
+		unregistered = append(unregistered, "SetContainerStateHandler")
 	}
 	if o.RbdsUnmapRbdHandler == nil {
 		unregistered = append(unregistered, "rbds.UnmapRbdHandler")
@@ -339,6 +380,18 @@ func (o *RbdAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/container"] = containers.NewCreateContainer(o.context, o.ContainersCreateContainerHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/container/{id}"] = NewDeleteContainer(o.context, o.DeleteContainerHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/container/{id}"] = NewGetContainer(o.context, o.GetContainerHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -351,6 +404,10 @@ func (o *RbdAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/rbd/{id}"] = rbds.NewGetRbd(o.context, o.RbdsGetRbdHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/container"] = containers.NewListContainers(o.context, o.ContainersListContainersHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -375,6 +432,10 @@ func (o *RbdAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/mount/rbd"] = mounts.NewMountRbd(o.context, o.MountsMountRbdHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/container/{id}/{state}"] = NewSetContainerState(o.context, o.SetContainerStateHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

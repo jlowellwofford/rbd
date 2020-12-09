@@ -35,6 +35,133 @@ func init() {
     "version": "1.0.0"
   },
   "paths": {
+    "/container": {
+      "get": {
+        "description": "Get a list of containers",
+        "tags": [
+          "containers"
+        ],
+        "operationId": "list_containers",
+        "responses": {
+          "200": {
+            "description": "List of containers",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/container"
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create a container",
+        "tags": [
+          "containers"
+        ],
+        "operationId": "create_container",
+        "responses": {
+          "201": {
+            "description": "Container creation succeed",
+            "schema": {
+              "$ref": "#/definitions/container"
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/container/{id}": {
+      "get": {
+        "description": "Get a container definition",
+        "operationId": "get_container",
+        "responses": {
+          "200": {
+            "description": "Container entry",
+            "schema": {
+              "$ref": "#/definitions/container"
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a container defition.  \nThis will stop running containers.\n",
+        "operationId": "delete_container",
+        "responses": {
+          "204": {
+            "description": "Container deleted"
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "format": "int64",
+          "name": "id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    "/container/{id}/{state}": {
+      "get": {
+        "description": "Request a (valid) state for a container. \nValid states to request include: ` + "`" + `running` + "`" + `, ` + "`" + `exited` + "`" + `, ` + "`" + `paused` + "`" + ` (paused is not yet implemented)\n",
+        "operationId": "set_container_state",
+        "responses": {
+          "200": {
+            "description": "Container state changed",
+            "schema": {
+              "$ref": "#/definitions/container"
+            }
+          },
+          "default": {
+            "description": "error"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "format": "int64",
+          "name": "id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "enum": [
+            "running",
+            "exited"
+          ],
+          "type": "string",
+          "name": "state",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
     "/mount/overlay": {
       "get": {
         "tags": [
@@ -346,6 +473,76 @@ func init() {
     }
   },
   "definitions": {
+    "container": {
+      "description": "The ` + "`" + `container` + "`" + ` option describes a minimally namespaced container.",
+      "type": "object",
+      "required": [
+        "mount",
+        "command"
+      ],
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "readOnly": true
+        },
+        "logfile": {
+          "type": "string",
+          "readOnly": true
+        },
+        "mount": {
+          "$ref": "#/definitions/mount"
+        },
+        "namespaces": {
+          "description": "A list of Linux namespaces to use.\n\nNote: This is currently unused.  All containers currently get ` + "`" + `mnt` + "`" + ` and ` + "`" + `pid` + "`" + `.\n      It's here as a placeholder for future use.\n",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/container_namespace"
+          }
+        },
+        "state": {
+          "description": "When read, this contains the current container state.\nOn creation, this requests the initial state (valid options: ` + "`" + `created` + "`" + ` or ` + "`" + `running` + "`" + `).\nThe default is ` + "`" + `created` + "`" + `.\n",
+          "enum": [
+            "created",
+            "running",
+            "restarting",
+            "paused",
+            "exited",
+            "dead"
+          ],
+          "$ref": "#/definitions/container_state"
+        }
+      }
+    },
+    "container_namespace": {
+      "description": "Linux namespace",
+      "type": "string",
+      "enum": [
+        "cgroup",
+        "ipc",
+        "net",
+        "mnt",
+        "pid",
+        "time",
+        "user",
+        "uts"
+      ]
+    },
+    "container_state": {
+      "description": "Valid container states",
+      "type": "string",
+      "enum": [
+        "created",
+        "running",
+        "restarting",
+        "paused",
+        "exited",
+        "dead"
+      ]
+    },
     "error": {
       "type": "object",
       "required": [
@@ -358,6 +555,27 @@ func init() {
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "mount": {
+      "description": "Generically address mounts by kind and ID",
+      "type": "object",
+      "required": [
+        "kind",
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "overlay",
+            "rbd"
+          ]
         }
       }
     },
@@ -589,6 +807,133 @@ func init() {
     "version": "1.0.0"
   },
   "paths": {
+    "/container": {
+      "get": {
+        "description": "Get a list of containers",
+        "tags": [
+          "containers"
+        ],
+        "operationId": "list_containers",
+        "responses": {
+          "200": {
+            "description": "List of containers",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/container"
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create a container",
+        "tags": [
+          "containers"
+        ],
+        "operationId": "create_container",
+        "responses": {
+          "201": {
+            "description": "Container creation succeed",
+            "schema": {
+              "$ref": "#/definitions/container"
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/container/{id}": {
+      "get": {
+        "description": "Get a container definition",
+        "operationId": "get_container",
+        "responses": {
+          "200": {
+            "description": "Container entry",
+            "schema": {
+              "$ref": "#/definitions/container"
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a container defition.  \nThis will stop running containers.\n",
+        "operationId": "delete_container",
+        "responses": {
+          "204": {
+            "description": "Container deleted"
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "format": "int64",
+          "name": "id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    "/container/{id}/{state}": {
+      "get": {
+        "description": "Request a (valid) state for a container. \nValid states to request include: ` + "`" + `running` + "`" + `, ` + "`" + `exited` + "`" + `, ` + "`" + `paused` + "`" + ` (paused is not yet implemented)\n",
+        "operationId": "set_container_state",
+        "responses": {
+          "200": {
+            "description": "Container state changed",
+            "schema": {
+              "$ref": "#/definitions/container"
+            }
+          },
+          "default": {
+            "description": "error"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "format": "int64",
+          "name": "id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "enum": [
+            "running",
+            "exited"
+          ],
+          "type": "string",
+          "name": "state",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
     "/mount/overlay": {
       "get": {
         "tags": [
@@ -900,6 +1245,76 @@ func init() {
     }
   },
   "definitions": {
+    "container": {
+      "description": "The ` + "`" + `container` + "`" + ` option describes a minimally namespaced container.",
+      "type": "object",
+      "required": [
+        "mount",
+        "command"
+      ],
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "readOnly": true
+        },
+        "logfile": {
+          "type": "string",
+          "readOnly": true
+        },
+        "mount": {
+          "$ref": "#/definitions/mount"
+        },
+        "namespaces": {
+          "description": "A list of Linux namespaces to use.\n\nNote: This is currently unused.  All containers currently get ` + "`" + `mnt` + "`" + ` and ` + "`" + `pid` + "`" + `.\n      It's here as a placeholder for future use.\n",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/container_namespace"
+          }
+        },
+        "state": {
+          "description": "When read, this contains the current container state.\nOn creation, this requests the initial state (valid options: ` + "`" + `created` + "`" + ` or ` + "`" + `running` + "`" + `).\nThe default is ` + "`" + `created` + "`" + `.\n",
+          "enum": [
+            "created",
+            "running",
+            "restarting",
+            "paused",
+            "exited",
+            "dead"
+          ],
+          "$ref": "#/definitions/container_state"
+        }
+      }
+    },
+    "container_namespace": {
+      "description": "Linux namespace",
+      "type": "string",
+      "enum": [
+        "cgroup",
+        "ipc",
+        "net",
+        "mnt",
+        "pid",
+        "time",
+        "user",
+        "uts"
+      ]
+    },
+    "container_state": {
+      "description": "Valid container states",
+      "type": "string",
+      "enum": [
+        "created",
+        "running",
+        "restarting",
+        "paused",
+        "exited",
+        "dead"
+      ]
+    },
     "error": {
       "type": "object",
       "required": [
@@ -912,6 +1327,27 @@ func init() {
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "mount": {
+      "description": "Generically address mounts by kind and ID",
+      "type": "object",
+      "required": [
+        "kind",
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "overlay",
+            "rbd"
+          ]
         }
       }
     },
